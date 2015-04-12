@@ -1,5 +1,5 @@
 <?php
-namespace SimpleQueue\Adapter\Sql;
+namespace SimpleQueue\Adapter\PdoSql;
 
 /**
  * Interface DriverInterface
