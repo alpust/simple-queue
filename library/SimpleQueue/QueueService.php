@@ -40,14 +40,11 @@ class QueueService {
 
     /**
      * @param $queueName
-     * @param int $count
-     * @return \Generator
+     * @return mixed
      */
-    public function dequeue($queueName, $count = 1)
+    public function dequeue($queueName)
     {
-        for($i = 0; $i < $count; $i++) {
-            yield $this->adapter->dequeue($queueName);
-        }
+        return $this->adapter->dequeue($queueName);
     }
 
     public function __destruct()
