@@ -5,7 +5,7 @@ namespace SimpleQueue\Adapter\PdoSQL;
  * Class MysqlPdoDriver
  * @package SimpleQueue\Adapter\Sql
  */
-class MySQLPdoDriver implements DriverInterface {
+class MySQLDriver implements DriverInterface {
 
     /**
      * @var \PDO
