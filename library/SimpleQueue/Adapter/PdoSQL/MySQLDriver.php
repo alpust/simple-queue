@@ -4,6 +4,8 @@ namespace SimpleQueue\Adapter\PdoSQL;
 /**
  * Class MysqlPdoDriver
  * @package SimpleQueue\Adapter\Sql
+ * @author Aleksey Pustovalov (alpust@gmail.com)
+ * @license GPLv2
  */
 class MySQLDriver implements DriverInterface {
 
@@ -43,11 +45,11 @@ class MySQLDriver implements DriverInterface {
 
             $rows = $request->fetchAll(\PDO::FETCH_ASSOC);
 
-            if (!isset($rows[0]['field']) || $rows[0]['field'] != "id") {
+            if (!isset($rows[0]['Field']) || $rows[0]['Field'] != "id") {
                 return false;
             }
 
-            if (!isset($rows[1]['field']) || $rows[0]['field'] != "queue_name") {
+            if (!isset($rows[1]['Field']) || $rows[1]['Field'] != "queue_name") {
                 return false;
             }
 
@@ -82,19 +84,19 @@ class MySQLDriver implements DriverInterface {
 
             $rows = $request->fetchAll(\PDO::FETCH_ASSOC);
 
-            if (!isset($rows[0]['field']) || $rows[0]['field'] != "id") {
+            if (!isset($rows[0]['Field']) || $rows[0]['Field'] != "id") {
                 return false;
             }
 
-            if (!isset($rows[1]['field']) || $rows[0]['field'] != "queue_id") {
+            if (!isset($rows[1]['Field']) || $rows[1]['Field'] != "queue_id") {
                 return false;
             }
 
-            if (!isset($rows[2]['field']) || $rows[0]['field'] != "subject") {
+            if (!isset($rows[2]['Field']) || $rows[2]['Field'] != "subject") {
                 return false;
             }
 
-            if (!isset($rows[3]['field']) || $rows[0]['field'] != "type") {
+            if (!isset($rows[3]['Field']) || $rows[3]['Field'] != "type") {
                 return false;
             }
 
@@ -168,7 +170,7 @@ class MySQLDriver implements DriverInterface {
             $this->connection->beginTransaction();
             $sql = "SELECT * FROM " . self::TABLE_NAMESPACE . self::MESSAGES_TABLE . " WHERE queue_id = :queueId ORDER BY id ASC LIMIT 1 FOR UPDATE";
             $request = $this->connection->prepare($sql);
-            $request->execute();
+            $request->execute(['queueId' => $queueId]);
             $message = $request->fetch(\PDO::FETCH_ASSOC);
 
             if (!isset($message['id'])) {

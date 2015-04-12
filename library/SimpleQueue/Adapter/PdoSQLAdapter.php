@@ -67,14 +67,19 @@ class PdoSQLAdapter implements AdapterInterface {
      */
     public function dequeue($queueName)
     {
-        $message = $this->driver->getMessage($queueName);
+        if(!$this->isExist($queueName)) {
+            return null;
+        }
+
+        $queueId = $this->existQueues[$queueName];
+        $message = $this->driver->getMessage($queueId);
 
         if(isset($message['id'])) {
             switch($message['type']) {
                 case "object":
                 case "array":
                     return unserialize($message['subject']);
-                break;
+                    break;
                 default:
                     return $message['subject'];
             }
