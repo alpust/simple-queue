@@ -1,5 +1,5 @@
 <?php
-namespace SimpleQueue\Adapter\PdoSql;
+namespace SimpleQueue\Adapter\PdoSQL;
 
 /**
  * Class MysqlPdoDriver
