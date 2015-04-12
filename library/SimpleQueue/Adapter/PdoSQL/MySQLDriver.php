@@ -37,20 +37,24 @@ class MySQLDriver implements DriverInterface {
      */
     public function isQueueTableVerified()
     {
-        $request = $this->connection->prepare("describe " . self::TABLE_NAMESPACE . self::QUEUES_TABLE);
-        $request->execute();
+        try {
+            $request = $this->connection->prepare("describe " . self::TABLE_NAMESPACE . self::QUEUES_TABLE);
+            $request->execute();
 
-        $rows = $request->fetchAll(\PDO::FETCH_ASSOC);
+            $rows = $request->fetchAll(\PDO::FETCH_ASSOC);
 
-        if(!isset($rows[0]['field']) || $rows[0]['field'] != "id") {
+            if (!isset($rows[0]['field']) || $rows[0]['field'] != "id") {
+                return false;
+            }
+
+            if (!isset($rows[1]['field']) || $rows[0]['field'] != "queue_name") {
+                return false;
+            }
+
+            return true;
+        } catch(\Exception $e) {
             return false;
         }
-
-        if(!isset($rows[1]['field']) || $rows[0]['field'] != "queue_name") {
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -72,28 +76,32 @@ class MySQLDriver implements DriverInterface {
      */
     public function isMessageTableVerified()
     {
-        $request = $this->connection->prepare("describe " . self::TABLE_NAMESPACE . self::MESSAGES_TABLE);
-        $request->execute();
+        try {
+            $request = $this->connection->prepare("describe " . self::TABLE_NAMESPACE . self::MESSAGES_TABLE);
+            $request->execute();
 
-        $rows = $request->fetchAll(\PDO::FETCH_ASSOC);
+            $rows = $request->fetchAll(\PDO::FETCH_ASSOC);
 
-        if(!isset($rows[0]['field']) || $rows[0]['field'] != "id") {
+            if (!isset($rows[0]['field']) || $rows[0]['field'] != "id") {
+                return false;
+            }
+
+            if (!isset($rows[1]['field']) || $rows[0]['field'] != "queue_id") {
+                return false;
+            }
+
+            if (!isset($rows[2]['field']) || $rows[0]['field'] != "subject") {
+                return false;
+            }
+
+            if (!isset($rows[3]['field']) || $rows[0]['field'] != "type") {
+                return false;
+            }
+
+            return true;
+        } catch(\Exception $e) {
             return false;
         }
-
-        if(!isset($rows[1]['field']) || $rows[0]['field'] != "queue_id") {
-            return false;
-        }
-
-        if(!isset($rows[2]['field']) || $rows[0]['field'] != "subject") {
-            return false;
-        }
-
-        if(!isset($rows[3]['field']) || $rows[0]['field'] != "type") {
-            return false;
-        }
-
-        return true;
     }
 
     /**
