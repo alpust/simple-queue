@@ -17,5 +17,10 @@
     "psr-0": {
       "SimpleQueue": "library"
     }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0-dev"
+    }
   }
 }
