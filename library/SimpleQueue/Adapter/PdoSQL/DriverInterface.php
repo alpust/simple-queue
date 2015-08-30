@@ -53,4 +53,10 @@ interface DriverInterface {
      */
     public function getMessage($queueId);
 
+    /**
+     * Close connection to db
+     * @return mixed
+     */
+    public function closeConnection();
+
 }

@@ -154,11 +154,14 @@ class PdoSQLAdapter implements AdapterInterface {
     }
 
     /**
-     * @return DriverInterface
+     * Close connection to db
+     * @return $this
      */
-    public function getDriver()
+    public function closeConnection()
     {
-        return $this->driver;
+        $this->driver->closeConnection();
+
+        return $this;
     }
 
 }

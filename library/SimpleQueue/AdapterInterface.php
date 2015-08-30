@@ -22,4 +22,10 @@ interface AdapterInterface {
      * @return mixed
      */
     public function dequeue($queueName);
+
+    /**
+     * Close connection, delete references and another data, which required some actions
+     * @return mixed
+     */
+    public function closeExternalResources();
 }

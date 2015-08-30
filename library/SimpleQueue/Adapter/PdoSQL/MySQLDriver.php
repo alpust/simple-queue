@@ -206,7 +206,7 @@ class MySQLDriver implements DriverInterface {
     /**
      * @return \PDO
      */
-    public function getConnection()
+    protected function getConnection()
     {
         if(!is_null($this->connection)) {
             return $this->connection;

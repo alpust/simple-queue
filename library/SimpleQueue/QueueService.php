@@ -47,13 +47,19 @@ class QueueService {
         return $this->adapter->dequeue($queueName);
     }
 
+    /**
+     *
+     */
     public function __destruct()
     {
         unset($this->adapter);
     }
 
-    public function getAdapter()
+    /**
+     * @return mixed
+     */
+    public function closeExternalResources()
     {
-        return $this->adapter;
+        return $this->adapter->closeExternalResources();
     }
 }
