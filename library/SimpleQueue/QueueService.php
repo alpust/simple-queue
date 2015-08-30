@@ -51,4 +51,9 @@ class QueueService {
     {
         unset($this->adapter);
     }
+
+    public function getAdapter()
+    {
+        return $this->adapter;
+    }
 }

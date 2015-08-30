@@ -14,6 +14,11 @@ class MySQLDriver implements DriverInterface {
      */
     protected $connection;
 
+    /**
+     * @var array
+     */
+    protected $config;
+
     const TABLE_NAMESPACE = "simple_queue_";
 
     const QUEUES_TABLE = "queues";
@@ -29,9 +34,11 @@ class MySQLDriver implements DriverInterface {
      */
     public function __construct($host, $user, $password, $databaseName)
     {
-        $dsn = "mysql:dbname=" . (string) $databaseName . ";host=" . (string) $host;
-        $this->connection = new \PDO($dsn, $user, $password);
-        $this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->config = [
+            'dsn' => "mysql:dbname=" . (string) $databaseName . ";host=" . (string) $host,
+            'user' => $user,
+            'password' => $password
+        ];
     }
 
     /**
@@ -194,5 +201,30 @@ class MySQLDriver implements DriverInterface {
     public function __destruct()
     {
         unset($this->connection);
+    }
+
+    /**
+     * @return \PDO
+     */
+    public function getConnection()
+    {
+        if(!is_null($this->connection)) {
+            return $this->connection;
+        }
+
+        $this->connection = new \PDO($this->config['dsn'], $this->config['user'], $this->config['password']);
+        $this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+        return $this->connection;
+    }
+
+    /**
+     * @return $this
+     */
+    public function closeConnection()
+    {
+        $this->connection = null;
+
+        return $this;
     }
 }

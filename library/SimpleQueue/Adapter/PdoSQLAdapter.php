@@ -153,4 +153,12 @@ class PdoSQLAdapter implements AdapterInterface {
         unset($this->driver);
     }
 
+    /**
+     * @return DriverInterface
+     */
+    public function getDriver()
+    {
+        return $this->driver;
+    }
+
 }
