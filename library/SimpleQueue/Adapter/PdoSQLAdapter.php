@@ -170,6 +170,6 @@ class PdoSQLAdapter implements AdapterInterface {
      */
     public function closeExternalResources()
     {
-        // TODO: Implement closeExternalResources() method.
+        return $this->driver->closeConnection();
     }
 }

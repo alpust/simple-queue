@@ -47,7 +47,7 @@ class MySQLDriver implements DriverInterface {
     public function isQueueTableVerified()
     {
         try {
-            $request = $this->connection->prepare("describe " . self::TABLE_NAMESPACE . self::QUEUES_TABLE);
+            $request = $this->getConnection()->prepare("describe " . self::TABLE_NAMESPACE . self::QUEUES_TABLE);
             $request->execute();
 
             $rows = $request->fetchAll(\PDO::FETCH_ASSOC);
@@ -75,7 +75,7 @@ class MySQLDriver implements DriverInterface {
             . self::TABLE_NAMESPACE . self::QUEUES_TABLE
             . "(id INT AUTO_INCREMENT NOT NULL, queue_name VARCHAR(1024) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = MyIsam";
 
-        $this->connection->exec($sql);
+        $this->getConnection()->exec($sql);
 
         return true;
     }
@@ -86,7 +86,7 @@ class MySQLDriver implements DriverInterface {
     public function isMessageTableVerified()
     {
         try {
-            $request = $this->connection->prepare("describe " . self::TABLE_NAMESPACE . self::MESSAGES_TABLE);
+            $request = $this->getConnection()->prepare("describe " . self::TABLE_NAMESPACE . self::MESSAGES_TABLE);
             $request->execute();
 
             $rows = $request->fetchAll(\PDO::FETCH_ASSOC);
@@ -122,7 +122,7 @@ class MySQLDriver implements DriverInterface {
             . self::TABLE_NAMESPACE . self::MESSAGES_TABLE
             . "(id INT AUTO_INCREMENT NOT NULL, queue_id INT NOT NULL, subject VARCHAR(2048) NOT NULL, `type` VARCHAR(128) NOT NULL, INDEX messages_queue_id (queue_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB";
 
-        $this->connection->exec($sql);
+        $this->getConnection()->exec($sql);
 
         return true;
     }
@@ -134,7 +134,7 @@ class MySQLDriver implements DriverInterface {
     public function isExist($queueName)
     {
         $sql = "select id from " . self::TABLE_NAMESPACE . self::QUEUES_TABLE . " where queue_name = :queueName";
-        $request = $this->connection->prepare($sql);
+        $request = $this->getConnection()->prepare($sql);
         $request->execute(['queueName' => $queueName]);
         return $request->fetchColumn();
     }
@@ -146,10 +146,10 @@ class MySQLDriver implements DriverInterface {
     public function createQueue($queueName)
     {
         $sql = "insert into " . self::TABLE_NAMESPACE . self::QUEUES_TABLE . " values(null, :queueName)";
-        $request = $this->connection->prepare($sql);
+        $request = $this->getConnection()->prepare($sql);
         $request->execute(["queueName" => $queueName]);
 
-        return $this->connection->lastInsertId();
+        return $this->getConnection()->lastInsertId();
     }
 
     /**
@@ -161,10 +161,10 @@ class MySQLDriver implements DriverInterface {
     public function insertMessage($queueId, $subject, $type)
     {
         $sql = "insert into " . self::TABLE_NAMESPACE . self::MESSAGES_TABLE . " values(NULL, :queueId, :subject, :type)";
-        $request = $this->connection->prepare($sql);
+        $request = $this->getConnection()->prepare($sql);
         $request->execute(["queueId" => $queueId, 'subject' => $subject, 'type' => $type]);
 
-        return $this->connection->lastInsertId();
+        return $this->getConnection()->lastInsertId();
     }
 
     /**
@@ -174,25 +174,25 @@ class MySQLDriver implements DriverInterface {
     public function getMessage($queueId)
     {
         try {
-            $this->connection->beginTransaction();
+            $this->getConnection()->beginTransaction();
             $sql = "SELECT * FROM " . self::TABLE_NAMESPACE . self::MESSAGES_TABLE . " WHERE queue_id = :queueId ORDER BY id ASC LIMIT 1 FOR UPDATE";
-            $request = $this->connection->prepare($sql);
+            $request = $this->getConnection()->prepare($sql);
             $request->execute(['queueId' => $queueId]);
             $message = $request->fetch(\PDO::FETCH_ASSOC);
 
             if (!isset($message['id'])) {
-                $this->connection->rollBack();
+                $this->getConnection()->rollBack();
                 return null;
             }
 
             $sql = "DELETE FROM " . self::TABLE_NAMESPACE . self::MESSAGES_TABLE . " WHERE id = :id";
-            $request = $this->connection->prepare($sql);
+            $request = $this->getConnection()->prepare($sql);
             $request->execute(['id' => $message['id']]);
 
-            $this->connection->commit();
+            $this->getConnection()->commit();
             return $message;
         } catch(\Exception $e) {
-            $this->connection->rollBack();
+            $this->getConnection()->rollBack();
         }
 
         return null;
@@ -200,7 +200,7 @@ class MySQLDriver implements DriverInterface {
 
     public function __destruct()
     {
-        unset($this->connection);
+        $this->connection = null;
     }
 
     /**
