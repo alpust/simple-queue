@@ -164,4 +164,12 @@ class PdoSQLAdapter implements AdapterInterface {
         return $this;
     }
 
+    /**
+     * Close connection, delete references and another data, which required some actions
+     * @return mixed
+     */
+    public function closeExternalResources()
+    {
+        // TODO: Implement closeExternalResources() method.
+    }
 }
